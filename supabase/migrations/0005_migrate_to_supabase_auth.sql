@@ -60,7 +60,23 @@ create trigger on_auth_user_created
   for each row
   execute function public.handle_new_user();
 
--- Step 9: Disable RLS on other tables (as per project guidelines)
+-- Step 9: Migrate existing auth.users to public.users
+insert into public.users (id, nickname, profile_image_url, account_status, terms_agreed_at, created_at, updated_at)
+select
+  au.id,
+  coalesce(au.raw_user_meta_data->>'nickname', split_part(au.email, '@', 1)) as nickname,
+  coalesce(
+    au.raw_user_meta_data->>'profile_image_url',
+    'https://picsum.photos/seed/' || au.id::text || '/200/200'
+  ) as profile_image_url,
+  'active' as account_status,
+  au.created_at as terms_agreed_at,
+  au.created_at,
+  now() as updated_at
+from auth.users au
+on conflict (id) do nothing;
+
+-- Step 10: Disable RLS on other tables (as per project guidelines)
 alter table if exists public.chat_rooms disable row level security;
 alter table if exists public.chat_direct_pairs disable row level security;
 alter table if exists public.chat_members disable row level security;
@@ -68,7 +84,7 @@ alter table if exists public.messages disable row level security;
 alter table if exists public.message_attachments disable row level security;
 alter table if exists public.message_reactions disable row level security;
 
--- Step 10: Create index for faster user lookups
+-- Step 11: Create index for faster user lookups
 create index if not exists idx_users_account_status on public.users(account_status);
 
 comment on table public.users is 'User profile data, linked to auth.users';

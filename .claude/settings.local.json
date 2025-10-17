@@ -20,7 +20,8 @@
       "Bash(cat:*)",
       "Bash(ls:*)",
       "Bash(tree:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []
