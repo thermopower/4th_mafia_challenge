@@ -48,10 +48,10 @@ export const LoginForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-950/60 p-6"
+      className="flex flex-col gap-6 rounded-2xl border border-slate-700/50 bg-slate-900/80 backdrop-blur-sm p-8 shadow-2xl"
     >
       <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium text-slate-200">
+        <label htmlFor="email" className="text-sm font-semibold text-slate-100">
           이메일
         </label>
         <Input
@@ -59,7 +59,7 @@ export const LoginForm = () => {
           type="email"
           autoComplete="email"
           placeholder="example@email.com"
-          className="bg-slate-900/70 text-slate-100"
+          className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-slate-400 h-11"
           {...register('email')}
         />
         {errors.email && (
@@ -68,7 +68,7 @@ export const LoginForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium text-slate-200">
+        <label htmlFor="password" className="text-sm font-semibold text-slate-100">
           비밀번호
         </label>
         <Input
@@ -76,7 +76,7 @@ export const LoginForm = () => {
           type="password"
           autoComplete="current-password"
           placeholder="••••••••"
-          className="bg-slate-900/70 text-slate-100"
+          className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-slate-400 h-11"
           {...register('password')}
         />
         {errors.password && (
@@ -92,7 +92,7 @@ export const LoginForm = () => {
             setValue('rememberMe', checked === true);
           }}
         />
-        <label htmlFor="rememberMe" className="text-sm text-slate-300">
+        <label htmlFor="rememberMe" className="text-sm text-slate-200 cursor-pointer">
           로그인 상태 유지
         </label>
       </div>
@@ -102,18 +102,18 @@ export const LoginForm = () => {
       <Button
         type="submit"
         disabled={isSubmitting || loginMutation.isPending}
-        className="w-full"
+        className="w-full h-11 text-base font-semibold"
       >
         {isSubmitting || loginMutation.isPending ? '로그인 중...' : '로그인'}
       </Button>
 
-      <div className="flex flex-col gap-2 text-xs text-slate-400">
-        <Link href="/auth/forgot-password" className="hover:text-slate-200 underline">
+      <div className="flex flex-col gap-3 text-sm border-t border-slate-700/50 pt-6">
+        <Link href="/auth/forgot-password" className="text-slate-300 hover:text-slate-100 transition-colors">
           비밀번호를 잊으셨나요?
         </Link>
-        <p>
+        <p className="text-slate-300">
           계정이 없으신가요?{' '}
-          <Link href="/signup" className="text-slate-200 hover:underline">
+          <Link href="/signup" className="text-slate-100 font-semibold hover:text-white transition-colors">
             회원가입
           </Link>
         </p>
