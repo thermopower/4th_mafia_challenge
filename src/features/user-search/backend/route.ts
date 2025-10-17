@@ -1,12 +1,13 @@
 import type { Hono } from 'hono';
 import { respond, failure } from '@/backend/http/response';
-import { getSupabase, type AppEnv } from '@/backend/hono/context';
+import { getSupabase, getUserId, type AppEnv } from '@/backend/hono/context';
+import { withAuth } from '@/backend/middleware/auth';
 import { UserSearchQuerySchema } from './schema';
 import { searchUsers } from './service';
 import { userSearchErrorCodes } from './error';
 
 export const registerUserSearchRoutes = (app: Hono<AppEnv>) => {
-  app.get('/api/users/search', async (c) => {
+  app.get('/api/users/search', withAuth(), async (c) => {
     const parsedQuery = UserSearchQuerySchema.safeParse({
       q: c.req.query('q'),
       limit: c.req.query('limit'),
@@ -25,22 +26,12 @@ export const registerUserSearchRoutes = (app: Hono<AppEnv>) => {
     }
 
     const supabase = getSupabase(c);
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return respond(
-        c,
-        failure(401, userSearchErrorCodes.unauthorized, 'Unauthorized')
-      );
-    }
+    const userId = getUserId(c);
 
     const result = await searchUsers(
       supabase,
       parsedQuery.data.q,
-      user.id,
+      userId,
       parsedQuery.data.limit
     );
 
