@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { loadCurrentUser } from "@/features/auth/server/load-current-user";
 import { CurrentUserProvider } from "@/features/auth/context/current-user-context";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,6 +25,7 @@ export default async function RootLayout({
             {children}
           </CurrentUserProvider>
         </Providers>
+        <Toaster />
       </body>
     </html>
   );
