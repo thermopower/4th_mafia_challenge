@@ -158,3 +158,22 @@ export const MessageRowSchema = z.object({
 });
 
 export type MessageRow = z.infer<typeof MessageRowSchema>;
+
+// ===== 채팅방 메타데이터 스키마 =====
+export const RoomParticipantSchema = z.object({
+  id: z.string().uuid(),
+  nickname: z.string(),
+  profileImageUrl: z.string(),
+});
+
+export const RoomMetaSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().nullable(),
+  roomType: z.enum(['direct', 'group']),
+  participants: z.array(RoomParticipantSchema),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type RoomParticipant = z.infer<typeof RoomParticipantSchema>;
+export type RoomMeta = z.infer<typeof RoomMetaSchema>;

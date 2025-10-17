@@ -5,6 +5,8 @@ import { ChatRoomContext } from './chat-room-context';
 import { chatRoomReducer } from './reducer';
 import { initialState } from './types';
 import type { MessageModel } from './types';
+import { apiClient } from '@/lib/remote/api-client';
+import type { RoomMeta } from '@/features/chat-room/lib/dto';
 
 export const ChatRoomProvider = ({
   children,
@@ -15,9 +17,23 @@ export const ChatRoomProvider = ({
 }) => {
   const [state, dispatch] = React.useReducer(chatRoomReducer, initialState);
 
-  // 방 진입 시 초기화
+  // 방 진입 시 초기화 및 메타데이터 fetch
   React.useEffect(() => {
     dispatch({ type: 'ENTER_ROOM', payload: { roomId, meta: null } });
+
+    // 채팅방 메타데이터 조회
+    const fetchRoomMeta = async () => {
+      try {
+        const response = await apiClient.GET(`/api/chat-rooms/${roomId}`);
+        if (response.ok && response.data) {
+          dispatch({ type: 'SET_ROOM_META', payload: response.data as RoomMeta });
+        }
+      } catch (error) {
+        console.error('Failed to fetch room meta:', error);
+      }
+    };
+
+    fetchRoomMeta();
 
     return () => {
       dispatch({ type: 'EXIT_ROOM' });

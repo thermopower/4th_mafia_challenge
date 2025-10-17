@@ -14,6 +14,7 @@ import {
   UpdateReadStatusRequestSchema,
 } from './schema';
 import {
+  getRoomMeta,
   getInitialMessages,
   syncMessages,
   sendMessage,
@@ -27,6 +28,37 @@ import { chatRoomErrorCodes } from './error';
  * 채팅방 라우트 등록
  */
 export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
+  // 0. 채팅방 메타데이터 조회
+  app.get('/api/chat-rooms/:roomId', withAuth(), async (c) => {
+    const roomId = c.req.param('roomId');
+
+    // roomId 검증
+    const roomIdValidation = z.string().uuid().safeParse(roomId);
+    if (!roomIdValidation.success) {
+      return respond(
+        c,
+        failure(
+          400,
+          'INVALID_ROOM_ID',
+          '유효하지 않은 채팅방 ID입니다.',
+          roomIdValidation.error.format()
+        )
+      );
+    }
+
+    const userId = getUserId(c);
+    const supabase = getSupabase(c);
+    const logger = getLogger(c);
+
+    const result = await getRoomMeta(supabase, userId, roomId);
+
+    if (!result.ok) {
+      logger.error('Failed to fetch room meta', (result as any).error.message);
+    }
+
+    return respond(c, result);
+  });
+
   // 1. 초기 메시지 로드 & 무한 스크롤
   app.get('/api/chat-rooms/:roomId/messages', withAuth(), async (c) => {
     const roomId = c.req.param('roomId');

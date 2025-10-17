@@ -1,4 +1,4 @@
-import type { Message } from '@/features/chat-room/lib/dto';
+import type { Message, RoomMeta } from '@/features/chat-room/lib/dto';
 
 export type MessageModel = Message;
 
@@ -12,7 +12,7 @@ export type PendingMessage = {
 
 export type ChatRoomState = {
   roomId: string | null;
-  roomMeta: { name: string; participants: string[] } | null;
+  roomMeta: RoomMeta | null;
   lastReadMessageId: string | null;
 
   // 메시지 타임라인
@@ -52,7 +52,8 @@ export type ChatRoomState = {
 };
 
 export type ChatRoomAction =
-  | { type: 'ENTER_ROOM'; payload: { roomId: string; meta: any } }
+  | { type: 'ENTER_ROOM'; payload: { roomId: string; meta: RoomMeta | null } }
+  | { type: 'SET_ROOM_META'; payload: RoomMeta }
   | { type: 'EXIT_ROOM' }
   | { type: 'SET_LAST_READ_MESSAGE_ID'; payload: string | null }
   | { type: 'MESSAGES/SET_INITIAL'; payload: MessageModel[] }

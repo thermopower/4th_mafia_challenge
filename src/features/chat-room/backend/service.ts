@@ -20,6 +20,7 @@ import type {
   Reaction,
   Attachment,
   ReplyTo,
+  RoomMeta,
 } from './schema';
 
 const MESSAGES_TABLE = 'messages';
@@ -27,6 +28,7 @@ const CHAT_MEMBERS_TABLE = 'chat_members';
 const MESSAGE_REACTIONS_TABLE = 'message_reactions';
 const MESSAGE_ATTACHMENTS_TABLE = 'message_attachments';
 const USERS_TABLE = 'users';
+const CHAT_ROOMS_TABLE = 'chat_rooms';
 
 const fallbackAvatar = (id: string) =>
   `https://picsum.photos/seed/${encodeURIComponent(id)}/200/200`;
@@ -198,6 +200,73 @@ const transformMessages = async (
   }
 
   return messages;
+};
+
+/**
+ * 0. 채팅방 메타데이터 조회
+ */
+export const getRoomMeta = async (
+  client: SupabaseClient,
+  userId: string,
+  roomId: string
+): Promise<HandlerResult<RoomMeta, ChatRoomServiceError, unknown>> => {
+  // 권한 확인
+  const isMember = await checkMembership(client, userId, roomId);
+  if (!isMember) {
+    return failure(
+      403,
+      chatRoomErrorCodes.notMember,
+      '채팅방에 참여하지 않은 사용자입니다.'
+    );
+  }
+
+  // 채팅방 정보 조회
+  const { data: room, error: roomError } = await client
+    .from(CHAT_ROOMS_TABLE)
+    .select('id, name, room_type, created_at, updated_at')
+    .eq('id', roomId)
+    .maybeSingle();
+
+  if (roomError || !room) {
+    return failure(
+      404,
+      chatRoomErrorCodes.messageNotFound,
+      '채팅방을 찾을 수 없습니다.',
+      roomError
+    );
+  }
+
+  // 참여자 정보 조회
+  const { data: participants, error: participantsError } = await client
+    .from(CHAT_MEMBERS_TABLE)
+    .select('user_id, users(id, nickname, profile_image_url)')
+    .eq('chat_room_id', roomId);
+
+  if (participantsError) {
+    return failure(
+      500,
+      chatRoomErrorCodes.fetchError,
+      '참여자 정보 조회에 실패했습니다.',
+      participantsError
+    );
+  }
+
+  const participantList =
+    participants?.map((p: any) => ({
+      id: p.users?.id || '',
+      nickname: p.users?.nickname || '알 수 없음',
+      profileImageUrl:
+        p.users?.profile_image_url || fallbackAvatar(p.users?.id || ''),
+    })) || [];
+
+  return success({
+    id: room.id,
+    name: room.name,
+    roomType: room.room_type,
+    participants: participantList,
+    createdAt: room.created_at,
+    updatedAt: room.updated_at,
+  });
 };
 
 /**

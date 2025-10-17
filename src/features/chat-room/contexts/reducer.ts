@@ -14,6 +14,12 @@ export const chatRoomReducer: React.Reducer<ChatRoomState, ChatRoomAction> = (
         roomMeta: action.payload.meta,
       };
 
+    case 'SET_ROOM_META':
+      return {
+        ...state,
+        roomMeta: action.payload,
+      };
+
     case 'EXIT_ROOM':
       return initialState;
 

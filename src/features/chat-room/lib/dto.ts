@@ -12,6 +12,8 @@ export type {
   DeleteMessageResponse,
   UpdateReadStatusRequest,
   UpdateReadStatusResponse,
+  RoomMeta,
+  RoomParticipant,
 } from '@/features/chat-room/backend/schema';
 
 export {
@@ -30,4 +32,6 @@ export {
   UpdateReadStatusResponseSchema,
   MessageTypeSchema,
   ReactionTypeSchema,
+  RoomMetaSchema,
+  RoomParticipantSchema,
 } from '@/features/chat-room/backend/schema';

@@ -88,6 +88,32 @@ alter table if exists public.message_reactions disable row level security;
 -- Step 11: Create index for faster user lookups
 create index if not exists idx_users_account_status on public.users(account_status);
 
+-- Step 12: Re-create foreign key constraints that were dropped
+-- These foreign keys were lost when we dropped the old users table
+alter table if exists public.chat_rooms
+  add constraint chat_rooms_created_by_fkey
+  foreign key (created_by) references public.users(id) on delete restrict;
+
+alter table if exists public.messages
+  add constraint messages_sender_id_fkey
+  foreign key (sender_id) references public.users(id) on delete cascade;
+
+alter table if exists public.chat_members
+  add constraint chat_members_user_id_fkey
+  foreign key (user_id) references public.users(id) on delete cascade;
+
+alter table if exists public.chat_direct_pairs
+  add constraint chat_direct_pairs_user_a_id_fkey
+  foreign key (user_a_id) references public.users(id) on delete cascade;
+
+alter table if exists public.chat_direct_pairs
+  add constraint chat_direct_pairs_user_b_id_fkey
+  foreign key (user_b_id) references public.users(id) on delete cascade;
+
+alter table if exists public.message_reactions
+  add constraint message_reactions_user_id_fkey
+  foreign key (user_id) references public.users(id) on delete cascade;
+
 comment on table public.users is 'User profile data, linked to auth.users';
 comment on column public.users.id is 'References auth.users.id';
 comment on column public.users.nickname is 'Display name for the user';
