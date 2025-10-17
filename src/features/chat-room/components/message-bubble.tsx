@@ -3,7 +3,7 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { MoreVertical, Heart, Bookmark, Smile } from 'lucide-react';
+import { Heart, Bookmark, Smile } from 'lucide-react';
 import type { Message } from '@/features/chat-room/lib/dto';
 import { useChatRoom } from '@/features/chat-room/contexts/chat-room-context';
 import { useToggleReaction } from '@/features/chat-room/hooks/useToggleReaction';
@@ -148,10 +148,10 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
             </button>
             <button
               onClick={() => actions.toggleReactionPicker(message.id)}
-              className="rounded-full px-2 py-1 text-xs hover:bg-gray-200"
+              className="rounded-full p-1 hover:bg-gray-200"
               title="리액션"
             >
-              <MoreVertical className="h-4 w-4 text-gray-400" />
+              <Smile className="h-4 w-4 text-gray-400" />
             </button>
             {isOwn && (
               <button
