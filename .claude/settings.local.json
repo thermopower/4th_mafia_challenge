@@ -18,7 +18,8 @@
       "Bash(npx eslint:*)",
       "Bash(git restore:*)",
       "Bash(cat:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

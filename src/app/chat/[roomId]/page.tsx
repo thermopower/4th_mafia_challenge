@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { ChatRoomContainer } from '@/features/chat-room/components/chat-room-container';
+import { useChatApp } from '@/contexts/chat-app-context';
+import { useRouter } from 'next/navigation';
 
 type PageProps = {
   params: Promise<{
@@ -11,15 +13,21 @@ type PageProps = {
 
 export default function ChatRoomPage({ params }: PageProps) {
   const [roomId, setRoomId] = React.useState<string | null>(null);
+  const { state } = useChatApp();
+  const router = useRouter();
 
   React.useEffect(() => {
     params.then((p) => setRoomId(p.roomId));
   }, [params]);
 
-  // TODO: 실제 인증된 userId를 가져오도록 수정
-  const userId = 'temp-user-id';
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  React.useEffect(() => {
+    if (!state.auth.profile) {
+      router.push('/login');
+    }
+  }, [state.auth.profile, router]);
 
-  if (!roomId) {
+  if (!roomId || !state.auth.profile) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p className="text-gray-500">로딩 중...</p>
@@ -27,5 +35,5 @@ export default function ChatRoomPage({ params }: PageProps) {
     );
   }
 
-  return <ChatRoomContainer roomId={roomId} userId={userId} />;
+  return <ChatRoomContainer roomId={roomId} userId={state.auth.profile.id} />;
 }

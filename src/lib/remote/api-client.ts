@@ -7,6 +7,22 @@ const apiClient = axios.create({
   },
 });
 
+// Request interceptor: localStorage에서 토큰을 읽어 Authorization 헤더에 추가
+apiClient.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 type ErrorPayload = {
   error?: {
     message?: string;

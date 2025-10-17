@@ -37,6 +37,7 @@ export const useLoginMutation = () => {
       });
 
       if (typeof window !== 'undefined') {
+        localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
       }
     },

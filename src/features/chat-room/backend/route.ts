@@ -4,8 +4,10 @@ import { failure, respond } from '@/backend/http/response';
 import {
   getLogger,
   getSupabase,
+  getUserId,
   type AppEnv,
 } from '@/backend/hono/context';
+import { withAuth } from '@/backend/middleware/auth';
 import {
   SendMessageRequestSchema,
   ToggleReactionRequestSchema,
@@ -26,7 +28,7 @@ import { chatRoomErrorCodes } from './error';
  */
 export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
   // 1. 초기 메시지 로드 & 무한 스크롤
-  app.get('/api/chat-rooms/:roomId/messages', async (c) => {
+  app.get('/api/chat-rooms/:roomId/messages', withAuth(), async (c) => {
     const roomId = c.req.param('roomId');
     const beforeTimestamp = c.req.query('beforeTimestamp');
     const limit = c.req.query('limit');
@@ -45,15 +47,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
       );
     }
 
-    // 임시로 userId를 헤더에서 가져옴 (실제로는 인증 미들웨어에서)
-    const userId = c.req.header('x-user-id');
-    if (!userId) {
-      return respond(
-        c,
-        failure(401, 'UNAUTHORIZED', '인증이 필요합니다.')
-      );
-    }
-
+    const userId = getUserId(c);
     const supabase = getSupabase(c);
     const logger = getLogger(c);
 
@@ -73,7 +67,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
   });
 
   // 2. Polling 동기화
-  app.get('/api/chat-rooms/:roomId/messages/sync', async (c) => {
+  app.get('/api/chat-rooms/:roomId/messages/sync', withAuth(), async (c) => {
     const roomId = c.req.param('roomId');
     const afterTimestamp = c.req.query('afterTimestamp');
 
@@ -103,14 +97,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
       );
     }
 
-    const userId = c.req.header('x-user-id');
-    if (!userId) {
-      return respond(
-        c,
-        failure(401, 'UNAUTHORIZED', '인증이 필요합니다.')
-      );
-    }
-
+    const userId = getUserId(c);
     const supabase = getSupabase(c);
     const logger = getLogger(c);
 
@@ -129,15 +116,8 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
   });
 
   // 3. 메시지 전송
-  app.post('/api/messages', async (c) => {
-    const userId = c.req.header('x-user-id');
-    if (!userId) {
-      return respond(
-        c,
-        failure(401, 'UNAUTHORIZED', '인증이 필요합니다.')
-      );
-    }
-
+  app.post('/api/messages', withAuth(), async (c) => {
+    const userId = getUserId(c);
     const body = await c.req.json();
     const parsedBody = SendMessageRequestSchema.safeParse(body);
 
@@ -170,7 +150,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
   });
 
   // 4. 리액션 토글
-  app.post('/api/messages/:messageId/reactions', async (c) => {
+  app.post('/api/messages/:messageId/reactions', withAuth(), async (c) => {
     const messageId = c.req.param('messageId');
 
     // messageId 검증
@@ -187,14 +167,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
       );
     }
 
-    const userId = c.req.header('x-user-id');
-    if (!userId) {
-      return respond(
-        c,
-        failure(401, 'UNAUTHORIZED', '인증이 필요합니다.')
-      );
-    }
-
+    const userId = getUserId(c);
     const body = await c.req.json();
     const parsedBody = z
       .object({ reactionType: z.enum(['like', 'bookmark', 'empathy']) })
@@ -228,7 +201,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
   });
 
   // 5. 메시지 삭제
-  app.delete('/api/messages/:messageId', async (c) => {
+  app.delete('/api/messages/:messageId', withAuth(), async (c) => {
     const messageId = c.req.param('messageId');
 
     // messageId 검증
@@ -245,14 +218,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
       );
     }
 
-    const userId = c.req.header('x-user-id');
-    if (!userId) {
-      return respond(
-        c,
-        failure(401, 'UNAUTHORIZED', '인증이 필요합니다.')
-      );
-    }
-
+    const userId = getUserId(c);
     const supabase = getSupabase(c);
     const logger = getLogger(c);
 
@@ -266,7 +232,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
   });
 
   // 6. 읽음 상태 업데이트
-  app.post('/api/chat-rooms/:roomId/read', async (c) => {
+  app.post('/api/chat-rooms/:roomId/read', withAuth(), async (c) => {
     const roomId = c.req.param('roomId');
 
     // roomId 검증
@@ -283,14 +249,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
       );
     }
 
-    const userId = c.req.header('x-user-id');
-    if (!userId) {
-      return respond(
-        c,
-        failure(401, 'UNAUTHORIZED', '인증이 필요합니다.')
-      );
-    }
-
+    const userId = getUserId(c);
     const body = await c.req.json();
     const parsedBody = z
       .object({ lastReadMessageId: z.string().uuid() })

@@ -1,13 +1,14 @@
 import type { Hono } from 'hono';
 import { respond, failure } from '@/backend/http/response';
-import { getLogger, getSupabase, type AppEnv } from '@/backend/hono/context';
+import { getLogger, getSupabase, getUserId, type AppEnv } from '@/backend/hono/context';
 import { rateLimit } from '@/backend/middleware/rate-limit';
+import { withAuth } from '@/backend/middleware/auth';
 import { CreateChatRequestSchema } from './schema';
 import { createChatRoom, findExistingDirectChat } from './service';
 import { chatCreationErrorCodes } from './error';
 
 export const registerChatCreationRoutes = (app: Hono<AppEnv>) => {
-  app.post('/api/chat-rooms/create', rateLimit({ maxRequests: 10 }), async (c) => {
+  app.post('/api/chat-rooms/create', withAuth(), rateLimit({ maxRequests: 10 }), async (c) => {
     const body = await c.req.json();
     const parsedBody = CreateChatRequestSchema.safeParse(body);
 
@@ -23,27 +24,16 @@ export const registerChatCreationRoutes = (app: Hono<AppEnv>) => {
       );
     }
 
+    const userId = getUserId(c);
     const supabase = getSupabase(c);
     const logger = getLogger(c);
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return respond(
-        c,
-        failure(401, chatCreationErrorCodes.unauthorized, 'Unauthorized')
-      );
-    }
 
     const { type, name, user_ids } = parsedBody.data;
 
     if (type === 'direct' && user_ids.length === 1) {
       const existingChat = await findExistingDirectChat(
         supabase,
-        user.id,
+        userId,
         user_ids[0]
       );
       if (existingChat.ok && existingChat.data) {
@@ -52,10 +42,10 @@ export const registerChatCreationRoutes = (app: Hono<AppEnv>) => {
     }
 
     const result = await createChatRoom(supabase, {
-      createdBy: user.id,
+      createdBy: userId,
       type,
       name,
-      participantIds: [user.id, ...user_ids],
+      participantIds: [userId, ...user_ids],
     });
 
     if (!result.ok) {
