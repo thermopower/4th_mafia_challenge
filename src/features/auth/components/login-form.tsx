@@ -37,9 +37,8 @@ export const LoginForm = () => {
       onSuccess: (data) => {
         if (data.mfaRequired) {
           router.push('/auth/mfa');
-        } else {
-          router.push(data.redirectTo);
         }
+        // redirectTo는 useAuthRedirect 훅이 자동으로 처리
       },
     });
   };
