@@ -66,7 +66,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
     );
 
     if (!result.ok) {
-      logger.error('Failed to fetch initial messages', result.error.message);
+      logger.error('Failed to fetch initial messages', (result as any).error.message);
     }
 
     return respond(c, result);
@@ -122,7 +122,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
     );
 
     if (!result.ok) {
-      logger.error('Failed to sync messages', result.error.message);
+      logger.error('Failed to sync messages', (result as any).error.message);
     }
 
     return respond(c, result);
@@ -159,10 +159,10 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
     const result = await sendMessage(supabase, userId, parsedBody.data);
 
     if (!result.ok) {
-      if (result.error.code === chatRoomErrorCodes.duplicateMessage) {
-        logger.info('Duplicate message detected', result.error.message);
+      if ((result as any).error.code === chatRoomErrorCodes.duplicateMessage) {
+        logger.info('Duplicate message detected', (result as any).error.message);
       } else {
-        logger.error('Failed to send message', result.error.message);
+        logger.error('Failed to send message', (result as any).error.message);
       }
     }
 
@@ -221,7 +221,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
     });
 
     if (!result.ok) {
-      logger.error('Failed to toggle reaction', result.error.message);
+      logger.error('Failed to toggle reaction', (result as any).error.message);
     }
 
     return respond(c, result);
@@ -259,7 +259,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
     const result = await deleteMessage(supabase, userId, messageId);
 
     if (!result.ok) {
-      logger.error('Failed to delete message', result.error.message);
+      logger.error('Failed to delete message', (result as any).error.message);
     }
 
     return respond(c, result);
@@ -319,7 +319,7 @@ export const registerChatRoomRoutes = (app: Hono<AppEnv>) => {
     );
 
     if (!result.ok) {
-      logger.error('Failed to update read status', result.error.message);
+      logger.error('Failed to update read status', (result as any).error.message);
     }
 
     return respond(c, result);

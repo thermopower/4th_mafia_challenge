@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/remote/api-client';
 import { InitialMessagesResponseSchema } from '@/features/chat-room/lib/dto';
@@ -9,7 +10,7 @@ import { useChatRoom } from '@/features/chat-room/contexts/chat-room-context';
 export const useMessagesQuery = (roomId: string, userId: string) => {
   const { actions, dispatch } = useChatRoom();
 
-  return useInfiniteQuery({
+  const query = useInfiniteQuery({
     queryKey: ['chat-room-messages', roomId],
     queryFn: async ({ pageParam }) => {
       const { data } = await apiClient.get(
@@ -31,12 +32,15 @@ export const useMessagesQuery = (roomId: string, userId: string) => {
     initialPageParam: undefined as string | undefined,
     enabled: !!roomId && !!userId,
     staleTime: 0,
-    onSuccess: (data) => {
-      const allMessages = data.pages.flatMap((page) => page.messages);
+  });
+
+  React.useEffect(() => {
+    if (query.data) {
+      const allMessages = query.data.pages.flatMap((page) => page.messages);
       actions.setInitialMessages(allMessages);
 
       // 마지막 메시지 정보 업데이트
-      const lastPage = data.pages[data.pages.length - 1];
+      const lastPage = query.data.pages[query.data.pages.length - 1];
       if (lastPage?.newestMessageId) {
         dispatch({
           type: 'SYNC/UPDATE',
@@ -56,6 +60,8 @@ export const useMessagesQuery = (roomId: string, userId: string) => {
           hasMore: lastPage?.hasMore ?? false,
         },
       });
-    },
-  });
+    }
+  }, [query.data, actions, dispatch]);
+
+  return query;
 };

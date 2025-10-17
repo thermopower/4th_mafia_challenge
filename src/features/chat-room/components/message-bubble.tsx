@@ -47,6 +47,7 @@ export const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
       <div className="flex max-w-[70%] flex-col">
         {!isOwn && (
           <div className="mb-1 flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={message.sender.profileImageUrl}
               alt={message.sender.nickname}

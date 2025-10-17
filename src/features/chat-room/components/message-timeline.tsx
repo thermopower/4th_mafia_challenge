@@ -32,6 +32,7 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
     if (!isLoading && state.messages.order.length > 0) {
       scrollToBottom(containerRef, false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   // 신규 메시지 도착 시 하단 스크롤

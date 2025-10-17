@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/remote/api-client';
 import { SyncMessagesResponseSchema } from '@/features/chat-room/lib/dto';
@@ -13,7 +14,7 @@ export const useMessagesSync = (
 ) => {
   const { state, actions, dispatch } = useChatRoom();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       'chat-room-sync',
       roomId,
@@ -41,23 +42,26 @@ export const useMessagesSync = (
     enabled:
       enabled && Boolean(state.sync.lastMessageId && state.sync.lastTimestamp),
     refetchInterval: CHAT_ROOM_CONSTANTS.POLLING_INTERVAL,
-    onSuccess: (data) => {
-      if (!data) return;
+  });
 
-      if (data.newMessages.length > 0) {
-        actions.appendMessages(data.newMessages);
+  React.useEffect(() => {
+    if (query.data) {
+      if (query.data.newMessages.length > 0) {
+        actions.appendMessages(query.data.newMessages);
       }
 
-      if (data.updatedMessages.length > 0) {
-        actions.updateMessages(data.updatedMessages);
+      if (query.data.updatedMessages.length > 0) {
+        actions.updateMessages(query.data.updatedMessages);
       }
 
-      if (data.deletedMessageIds.length > 0) {
+      if (query.data.deletedMessageIds.length > 0) {
         dispatch({
           type: 'MESSAGES/REMOVE',
-          payload: data.deletedMessageIds,
+          payload: query.data.deletedMessageIds,
         });
       }
-    },
-  });
+    }
+  }, [query.data, actions, dispatch]);
+
+  return query;
 };
