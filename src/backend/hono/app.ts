@@ -3,6 +3,11 @@ import { errorBoundary } from "@/backend/middleware/error";
 import { withAppContext } from "@/backend/middleware/context";
 import { withSupabase } from "@/backend/middleware/supabase";
 import { registerExampleRoutes } from "@/features/example/backend/route";
+import { registerAuthRoutes } from "@/features/auth/backend/route";
+import { registerChatRoomRoutes } from "@/features/chat-room/backend/route";
+import { registerChatListRoutes } from "@/features/chat-list/backend/route";
+import { registerChatCreationRoutes } from "@/features/chat-creation/backend/route";
+import { registerUserSearchRoutes } from "@/features/user-search/backend/route";
 import type { AppEnv } from "@/backend/hono/context";
 
 let singletonApp: Hono<AppEnv> | null = null;
@@ -19,6 +24,11 @@ export const createHonoApp = () => {
   app.use("*", withSupabase());
 
   registerExampleRoutes(app);
+  registerAuthRoutes(app);
+  registerChatRoomRoutes(app);
+  registerChatListRoutes(app);
+  registerChatCreationRoutes(app);
+  registerUserSearchRoutes(app);
 
   app.notFound((c) => {
     return c.json(
