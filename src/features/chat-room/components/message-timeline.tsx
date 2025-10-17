@@ -15,7 +15,7 @@ type MessageTimelineProps = {
 };
 
 export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
-  const { state } = useChatRoom();
+  const { state, actions } = useChatRoom();
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const { isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
@@ -41,6 +41,25 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
       scrollToBottom(containerRef, true);
     }
   }, [state.messages.order.length]);
+
+  // 하이라이트된 메시지로 스크롤
+  React.useEffect(() => {
+    if (state.ui.highlightedMessageId && containerRef.current) {
+      const messageElement = document.getElementById(
+        `message-${state.ui.highlightedMessageId}`
+      );
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // 3초 후 하이라이트 제거
+        const timer = setTimeout(() => {
+          actions.highlightMessage(null);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [state.ui.highlightedMessageId, actions]);
 
   // 스크롤 이벤트: 상단 도달 시 무한 스크롤
   const handleScroll = React.useCallback(() => {
@@ -98,6 +117,7 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
               key={messageId}
               message={message}
               isOwn={message.senderId === userId}
+              isHighlighted={state.ui.highlightedMessageId === messageId}
             />
           );
         })}

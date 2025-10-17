@@ -10,9 +10,10 @@ import { useChatRoom } from '@/features/chat-room/contexts/chat-room-context';
 type MessageBubbleProps = {
   message: Message;
   isOwn: boolean;
+  isHighlighted?: boolean;
 };
 
-export const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
+export const MessageBubble = ({ message, isOwn, isHighlighted = false }: MessageBubbleProps) => {
   const { actions } = useChatRoom();
 
   const handleReactionClick = (
@@ -42,7 +43,9 @@ export const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
   return (
     <div
       id={`message-${message.id}`}
-      className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group`}
+      className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group transition-all ${
+        isHighlighted ? 'animate-pulse bg-yellow-100 -mx-4 px-4 py-2 rounded-lg' : ''
+      }`}
     >
       <div className="flex max-w-[70%] flex-col">
         {!isOwn && (
@@ -60,14 +63,18 @@ export const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
         )}
 
         {message.replyTo && (
-          <div className="mb-2 rounded-lg bg-gray-50 p-2 text-xs text-gray-600">
+          <button
+            onClick={() => actions.highlightMessage(message.replyToMessageId)}
+            className="mb-2 w-full rounded-lg bg-gray-50 p-2 text-left text-xs text-gray-600 hover:bg-gray-100 transition-colors"
+            title="원본 메시지로 이동"
+          >
             <p className="font-medium">{message.replyTo.sender.nickname}</p>
             <p className="truncate">
               {message.replyTo.isDeleted
                 ? '삭제된 메시지'
                 : message.replyTo.content}
             </p>
-          </div>
+          </button>
         )}
 
         <div
