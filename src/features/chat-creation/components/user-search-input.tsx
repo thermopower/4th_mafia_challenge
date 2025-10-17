@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import Image from "next/image";
+import { useState, useEffect } from "react";
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useUserSearch } from '../hooks/use-user-search';
@@ -55,10 +56,12 @@ export const UserSearchInput = ({ selectedUserIds, onSelectUser }: Props) => {
               }}
               className="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer"
             >
-              <img
-                src={user.profileImageUrl}
+              <Image
+                src={user.profileImageUrl || 'https://picsum.photos/seed/user-search/80/80'}
                 alt={user.nickname}
-                className="w-10 h-10 rounded-full"
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full object-cover"
               />
               <div>
                 <p className="font-medium">{user.nickname}</p>

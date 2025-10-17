@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { formatRelativeTime } from '@/lib/utils/time';
-import { truncateText } from '@/lib/utils/text';
-import type { ChatRoomItem as ChatRoomItemType } from '../lib/dto';
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { formatRelativeTime } from "@/lib/utils/time";
+import { truncateText } from "@/lib/utils/text";
+import type { ChatRoomItem as ChatRoomItemType } from "../lib/dto";
 
 type Props = {
   room: ChatRoomItemType;
@@ -41,10 +42,12 @@ export const ChatRoomItem = ({ room, currentUserId }: Props) => {
       onClick={handleClick}
       className="flex items-center gap-3 p-4 hover:bg-gray-100 cursor-pointer border-b transition-colors"
     >
-      <img
-        src={displayAvatar || 'https://picsum.photos/seed/default/200/200'}
+      <Image
+        src={displayAvatar || "https://picsum.photos/seed/default/200/200"}
         alt={displayName}
-        className="w-12 h-12 rounded-full object-cover"
+        width={48}
+        height={48}
+        className="h-12 w-12 rounded-full object-cover"
       />
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-center">

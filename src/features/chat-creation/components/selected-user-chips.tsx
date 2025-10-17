@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { UserSearchItem } from '@/features/user-search/lib/dto';
+import Image from "next/image";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { UserSearchItem } from "@/features/user-search/lib/dto";
 
 type Props = {
   selectedUsers: UserSearchItem[];
@@ -19,10 +20,12 @@ export const SelectedUserChips = ({ selectedUsers, onRemove }: Props) => {
           key={user.id}
           className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
         >
-          <img
-            src={user.profileImageUrl}
+          <Image
+            src={user.profileImageUrl || "https://picsum.photos/seed/user-chip/40/40"}
             alt={user.nickname}
-            className="w-5 h-5 rounded-full"
+            width={20}
+            height={20}
+            className="h-5 w-5 rounded-full object-cover"
           />
           <span>{user.nickname}</span>
           <Button
