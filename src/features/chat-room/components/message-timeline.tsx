@@ -126,6 +126,7 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
                 message={message}
                 isOwn={message.senderId === userId}
                 isHighlighted={state.ui.highlightedMessageId === messageId}
+                userId={userId}
               />
             </React.Fragment>
           );

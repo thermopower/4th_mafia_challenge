@@ -6,6 +6,7 @@ import { ChatRoomHeader } from './chat-room-header';
 import { MessageTimeline } from './message-timeline';
 import { MessageComposer } from './message-composer';
 import { DeleteMessageModal } from './delete-message-modal';
+import { ReactionPicker } from './reaction-picker';
 
 type ChatRoomContainerProps = {
   roomId: string;
@@ -23,6 +24,7 @@ export const ChatRoomContainer = ({
         <MessageTimeline roomId={roomId} userId={userId} />
         <MessageComposer userId={userId} />
         <DeleteMessageModal userId={userId} />
+        <ReactionPicker userId={userId} />
       </div>
     </ChatRoomProvider>
   );

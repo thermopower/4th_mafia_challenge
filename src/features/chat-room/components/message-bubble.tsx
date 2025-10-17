@@ -6,20 +6,26 @@ import { ko } from 'date-fns/locale';
 import { MoreVertical, Heart, Bookmark, Smile } from 'lucide-react';
 import type { Message } from '@/features/chat-room/lib/dto';
 import { useChatRoom } from '@/features/chat-room/contexts/chat-room-context';
+import { useToggleReaction } from '@/features/chat-room/hooks/useToggleReaction';
 
 type MessageBubbleProps = {
   message: Message;
   isOwn: boolean;
   isHighlighted?: boolean;
+  userId: string;
 };
 
-export const MessageBubble = ({ message, isOwn, isHighlighted = false }: MessageBubbleProps) => {
+export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }: MessageBubbleProps) => {
   const { actions } = useChatRoom();
+  const toggleReactionMutation = useToggleReaction(userId);
 
-  const handleReactionClick = (
+  const handleReactionToggle = (
     reactionType: 'like' | 'bookmark' | 'empathy'
   ) => {
-    actions.toggleReactionPicker(message.id);
+    toggleReactionMutation.mutate({
+      messageId: message.id,
+      reactionType,
+    });
   };
 
   const handleReplyClick = () => {
@@ -115,16 +121,17 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false }: Message
               {message.reactions.map((reaction) => (
                 <button
                   key={reaction.reactionType}
-                  onClick={() => handleReactionClick(reaction.reactionType)}
-                  className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ${
+                  onClick={() => handleReactionToggle(reaction.reactionType)}
+                  className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs transition-colors ${
                     reaction.reactedByMe
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
+                  disabled={toggleReactionMutation.isPending}
                 >
-                  {reaction.reactionType === 'like' && <Heart className="h-3 w-3" />}
-                  {reaction.reactionType === 'bookmark' && <Bookmark className="h-3 w-3" />}
-                  {reaction.reactionType === 'empathy' && <Smile className="h-3 w-3" />}
+                  {reaction.reactionType === 'like' && <Heart className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-blue-600' : ''}`} />}
+                  {reaction.reactionType === 'bookmark' && <Bookmark className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-blue-600' : ''}`} />}
+                  {reaction.reactionType === 'empathy' && <Smile className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-blue-600' : ''}`} />}
                   {reaction.count}
                 </button>
               ))}
