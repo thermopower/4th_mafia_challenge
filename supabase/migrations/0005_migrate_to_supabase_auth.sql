@@ -48,7 +48,8 @@ begin
       new.raw_user_meta_data->>'profile_image_url',
       'https://picsum.photos/seed/' || new.id::text || '/200/200'
     )
-  );
+  )
+  on conflict (id) do nothing;
   return new;
 end;
 $$;
