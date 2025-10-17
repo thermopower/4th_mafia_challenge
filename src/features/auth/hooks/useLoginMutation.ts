@@ -4,6 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import { apiClient, extractApiErrorMessage } from '@/lib/remote/api-client';
 import { LoginResponseSchema, type LoginRequest } from '../lib/dto';
 import { useChatApp } from '@/contexts/chat-app-context';
+import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
+import { useCurrentUser } from './useCurrentUser';
 
 const loginUser = async (request: LoginRequest) => {
   try {
@@ -17,10 +19,11 @@ const loginUser = async (request: LoginRequest) => {
 
 export const useLoginMutation = () => {
   const { actions } = useChatApp();
+  const { refresh } = useCurrentUser();
 
   return useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       actions.signInSuccess({
         session: {
           accessToken: data.accessToken,
@@ -40,6 +43,16 @@ export const useLoginMutation = () => {
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
       }
+
+      // Supabase 브라우저 클라이언트에 세션 설정
+      const supabase = getSupabaseBrowserClient();
+      await supabase.auth.setSession({
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken,
+      });
+
+      // CurrentUserContext 새로고침
+      await refresh();
     },
     onError: (error) => {
       console.error('Login failed:', error.message);
