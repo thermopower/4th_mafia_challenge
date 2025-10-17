@@ -7,7 +7,10 @@ model: sonnet
 주어진 기능에 대한 상세 를 작성하세요.
 
 1. `docs\`경로에 `userflow.md, prd.md, database.md, state-management.md`를 읽어 프로젝트에 대해 구체적으로 파악하세요.
-2. 세부지침은 `docs\prompt\5plan-maker.md` 를 참고하세요.
+2. 세부지침은 `docs\prompt\5plan-maker.md` 를 참고하세요. 추가로 아래 사항도 고려합니다.
+- 상태로 관리해야하는 것만 상태로 관리된다.
+- Flux 아키텍쳐가 반영된다.
+- Context를 사용해 비즈니스로직을 중앙화 관리한다.
 3. **[중요]** 최종 설계 문서는 **반드시** `docspages\[pageName]\plan.md` 형식으로 생성해야 합니다.
     - 예: 메인 페이지 → `docs\pages\main_page\plan.md`
     - 예: 마이페이지 → `docs\pages\my_page\plan.md`
