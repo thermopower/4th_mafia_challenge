@@ -9,6 +9,7 @@ import {
   getSupabase,
   type AppEnv,
 } from '@/backend/hono/context';
+import { rateLimit } from '@/backend/middleware/rate-limit';
 import { LoginRequestSchema, SignupRequestSchema } from './schema';
 import { authenticateUser, createUserWithSession } from './service';
 import {
@@ -19,7 +20,7 @@ import {
 } from './error';
 
 export const registerAuthRoutes = (app: Hono<AppEnv>) => {
-  app.post('/api/auth/login', async (c) => {
+  app.post('/api/auth/login', rateLimit({ maxRequests: 5 }), async (c) => {
     const body = await c.req.json();
     const parsedBody = LoginRequestSchema.safeParse(body);
 
@@ -72,7 +73,7 @@ export const registerAuthRoutes = (app: Hono<AppEnv>) => {
     return respond(c, result);
   });
 
-  app.post('/api/auth/signup', async (c) => {
+  app.post('/api/auth/signup', rateLimit({ maxRequests: 5 }), async (c) => {
     const body = await c.req.json();
     const parsedRequest = SignupRequestSchema.safeParse(body);
 

@@ -1,12 +1,13 @@
 import type { Hono } from 'hono';
 import { respond, failure } from '@/backend/http/response';
 import { getLogger, getSupabase, type AppEnv } from '@/backend/hono/context';
+import { rateLimit } from '@/backend/middleware/rate-limit';
 import { CreateChatRequestSchema } from './schema';
 import { createChatRoom, findExistingDirectChat } from './service';
 import { chatCreationErrorCodes } from './error';
 
 export const registerChatCreationRoutes = (app: Hono<AppEnv>) => {
-  app.post('/api/chat-rooms/create', async (c) => {
+  app.post('/api/chat-rooms/create', rateLimit({ maxRequests: 10 }), async (c) => {
     const body = await c.req.json();
     const parsedBody = CreateChatRequestSchema.safeParse(body);
 
