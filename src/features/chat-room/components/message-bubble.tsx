@@ -124,12 +124,31 @@ export const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
             </div>
           )}
 
-          <button
-            onClick={() => actions.toggleReactionPicker(message.id)}
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <MoreVertical className="h-4 w-4 text-gray-400" />
-          </button>
+          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={handleReplyClick}
+              className="rounded-full px-2 py-1 text-xs hover:bg-gray-200"
+              title="답장"
+            >
+              답장
+            </button>
+            <button
+              onClick={() => actions.toggleReactionPicker(message.id)}
+              className="rounded-full px-2 py-1 text-xs hover:bg-gray-200"
+              title="리액션"
+            >
+              <MoreVertical className="h-4 w-4 text-gray-400" />
+            </button>
+            {isOwn && (
+              <button
+                onClick={handleDeleteClick}
+                className="rounded-full px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                title="삭제"
+              >
+                삭제
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

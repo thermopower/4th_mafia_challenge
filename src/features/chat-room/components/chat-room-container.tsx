@@ -5,6 +5,7 @@ import { ChatRoomProvider } from '@/features/chat-room/contexts/chat-room-provid
 import { ChatRoomHeader } from './chat-room-header';
 import { MessageTimeline } from './message-timeline';
 import { MessageComposer } from './message-composer';
+import { DeleteMessageModal } from './delete-message-modal';
 
 type ChatRoomContainerProps = {
   roomId: string;
@@ -21,6 +22,7 @@ export const ChatRoomContainer = ({
         <ChatRoomHeader />
         <MessageTimeline roomId={roomId} userId={userId} />
         <MessageComposer userId={userId} />
+        <DeleteMessageModal userId={userId} />
       </div>
     </ChatRoomProvider>
   );
