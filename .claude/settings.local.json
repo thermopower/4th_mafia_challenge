@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\n메시지 리액션 유스케이스 작성\n\n- 메시지 리액션 기능 상세 유스케이스 문서화\n- like, bookmark, empathy 리액션 타입 지원\n- 리액션 추가/제거 토글 동작 정의\n- Polling 기반 실시간 동기화 방식\n- 권한 검증 및 에러 처리 시나리오\n- PlantUML 시퀀스 다이어그램 포함\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\n메시지 전송 유스케이스 문서 작성\n\n- docs/usecases/004/spec.md 생성\n- 메시지 전송 기능의 상세 흐름 정의\n- Primary Actor, Precondition, Trigger 명시\n- Main Scenario 단계별 상세 정의\n- Edge Cases 처리 방안 포함\n- Business Rules 및 UI/UX 고려사항 작성\n- PlantUML Sequence Diagram 추가\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
