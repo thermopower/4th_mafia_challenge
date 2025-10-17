@@ -7,6 +7,7 @@ import { useMessagesQuery } from '@/features/chat-room/hooks/useMessagesQuery';
 import { useMessagesSync } from '@/features/chat-room/hooks/useMessagesSync';
 import { useUpdateReadStatus } from '@/features/chat-room/hooks/useUpdateReadStatus';
 import { MessageBubble } from './message-bubble';
+import { UnreadDivider } from './unread-divider';
 import { isScrolledToBottom, scrollToBottom } from '@/features/chat-room/lib/scroll-utils';
 
 type MessageTimelineProps = {
@@ -108,17 +109,25 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
       )}
 
       <div className="space-y-4">
-        {state.messages.order.map((messageId) => {
+        {state.messages.order.map((messageId, index) => {
           const message = state.messages.byId[messageId];
           if (!message) return null;
 
+          // 읽지 않은 메시지 구분선 표시
+          const showUnreadDivider =
+            state.lastReadMessageId &&
+            index > 0 &&
+            state.messages.order[index - 1] === state.lastReadMessageId;
+
           return (
-            <MessageBubble
-              key={messageId}
-              message={message}
-              isOwn={message.senderId === userId}
-              isHighlighted={state.ui.highlightedMessageId === messageId}
-            />
+            <React.Fragment key={messageId}>
+              {showUnreadDivider && <UnreadDivider />}
+              <MessageBubble
+                message={message}
+                isOwn={message.senderId === userId}
+                isHighlighted={state.ui.highlightedMessageId === messageId}
+              />
+            </React.Fragment>
           );
         })}
 

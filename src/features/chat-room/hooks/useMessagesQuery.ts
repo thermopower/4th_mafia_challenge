@@ -60,6 +60,15 @@ export const useMessagesQuery = (roomId: string, userId: string) => {
           hasMore: lastPage?.hasMore ?? false,
         },
       });
+
+      // 초기 로드 시 중간 메시지를 lastReadMessageId로 설정 (데모)
+      if (allMessages.length > 5) {
+        const middleIndex = Math.floor(allMessages.length * 0.6);
+        dispatch({
+          type: 'SET_LAST_READ_MESSAGE_ID',
+          payload: allMessages[middleIndex].id,
+        });
+      }
     }
   }, [query.data, actions, dispatch]);
 

@@ -17,6 +17,12 @@ export const chatRoomReducer: React.Reducer<ChatRoomState, ChatRoomAction> = (
     case 'EXIT_ROOM':
       return initialState;
 
+    case 'SET_LAST_READ_MESSAGE_ID':
+      return {
+        ...state,
+        lastReadMessageId: action.payload,
+      };
+
     case 'MESSAGES/SET_INITIAL': {
       const byId: Record<string, MessageModel> = {};
       const order: string[] = [];
