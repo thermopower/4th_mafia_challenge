@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Send, X } from 'lucide-react';
+import { Send, X, Smile } from 'lucide-react';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { useChatRoom } from '@/features/chat-room/contexts/chat-room-context';
 import { useSendMessage } from '@/features/chat-room/hooks/useSendMessage';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,6 +14,10 @@ type MessageComposerProps = {
 export const MessageComposer = ({ userId }: MessageComposerProps) => {
   const { state, dispatch, actions } = useChatRoom();
   const sendMessageMutation = useSendMessage(userId);
+
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const emojiPickerRef = React.useRef<HTMLDivElement>(null);
 
   const handleSend = () => {
     const content = state.composer.draft.trim();
@@ -33,6 +38,47 @@ export const MessageComposer = ({ userId }: MessageComposerProps) => {
       handleSend();
     }
   };
+
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const cursorPosition = textarea.selectionStart;
+    const currentDraft = state.composer.draft;
+    const newDraft =
+      currentDraft.slice(0, cursorPosition) +
+      emojiData.emoji +
+      currentDraft.slice(cursorPosition);
+
+    dispatch({ type: 'COMPOSER/SET_DRAFT', payload: newDraft });
+
+    setTimeout(() => {
+      if (textarea) {
+        const newCursorPosition = cursorPosition + emojiData.emoji.length;
+        textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+        textarea.focus();
+      }
+    }, 0);
+  };
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const replyToMessage = state.composer.replyTo
     ? state.messages.byId[state.composer.replyTo]
@@ -59,17 +105,28 @@ export const MessageComposer = ({ userId }: MessageComposerProps) => {
         </div>
       )}
 
-      <div className="flex items-end gap-2">
-        <textarea
-          value={state.composer.draft}
-          onChange={(e) =>
-            dispatch({ type: 'COMPOSER/SET_DRAFT', payload: e.target.value })
-          }
-          onKeyDown={handleKeyDown}
-          placeholder="메시지를 입력하세요..."
-          className="flex-1 resize-none rounded-2xl border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-          rows={1}
-        />
+      <div className="relative flex items-end gap-2">
+        <div className="relative flex-1">
+          <textarea
+            ref={textareaRef}
+            value={state.composer.draft}
+            onChange={(e) =>
+              dispatch({ type: 'COMPOSER/SET_DRAFT', payload: e.target.value })
+            }
+            onKeyDown={handleKeyDown}
+            placeholder="메시지를 입력하세요..."
+            className="w-full resize-none rounded-2xl border border-gray-300 px-4 py-2 pr-12 focus:border-blue-500 focus:outline-none"
+            rows={1}
+          />
+          <button
+            type="button"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-gray-100"
+          >
+            <Smile className="h-5 w-5 text-gray-500" />
+          </button>
+        </div>
+
         <button
           onClick={handleSend}
           disabled={!state.composer.draft.trim()}
@@ -77,6 +134,19 @@ export const MessageComposer = ({ userId }: MessageComposerProps) => {
         >
           <Send className="h-5 w-5" />
         </button>
+
+        {showEmojiPicker && (
+          <div
+            ref={emojiPickerRef}
+            className="absolute bottom-full right-0 mb-2 z-10"
+          >
+            <EmojiPicker
+              onEmojiClick={handleEmojiClick}
+              width={320}
+              height={400}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

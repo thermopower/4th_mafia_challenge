@@ -31,6 +31,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4",
+    "emoji-picker-react": "^4.14.1",
     "es-toolkit": "^1",
     "framer-motion": "^11",
     "hono": "^4.9.9",
