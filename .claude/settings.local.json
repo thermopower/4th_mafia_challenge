@@ -8,7 +8,8 @@
       "Bash(git commit -m \"$(cat <<''EOF''\ndocs: 채팅방 진입 및 메시지 동기화 유스케이스 작성\n\n채팅방 진입, Polling 기반 실시간 동기화, 무한 스크롤, 읽음 상태 갱신 등 상세 시나리오 및 예외 처리 포함.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(dir:*)",
       "Bash(git reset:*)",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
