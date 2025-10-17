@@ -8,10 +8,19 @@ export const chatRoomReducer: React.Reducer<ChatRoomState, ChatRoomAction> = (
 ) => {
   switch (action.type) {
     case 'ENTER_ROOM':
+      // 다른 채팅방으로 이동하는 경우에만 초기화
+      if (state.roomId !== action.payload.roomId) {
+        return {
+          ...initialState,
+          roomId: action.payload.roomId,
+          roomMeta: action.payload.meta,
+        };
+      }
+      // 같은 방에 재진입하는 경우 메시지 유지
       return {
-        ...initialState,
+        ...state,
         roomId: action.payload.roomId,
-        roomMeta: action.payload.meta,
+        roomMeta: action.payload.meta ?? state.roomMeta,
       };
 
     case 'SET_ROOM_META':
@@ -21,7 +30,11 @@ export const chatRoomReducer: React.Reducer<ChatRoomState, ChatRoomAction> = (
       };
 
     case 'EXIT_ROOM':
-      return initialState;
+      // 메시지를 유지하기 위해 roomId만 null로 설정
+      return {
+        ...state,
+        roomId: null,
+      };
 
     case 'SET_LAST_READ_MESSAGE_ID':
       return {

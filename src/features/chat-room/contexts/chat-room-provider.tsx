@@ -35,9 +35,8 @@ export const ChatRoomProvider = ({
 
     fetchRoomMeta();
 
-    return () => {
-      dispatch({ type: 'EXIT_ROOM' });
-    };
+    // cleanup 함수에서 EXIT_ROOM을 호출하지 않음
+    // 이렇게 하면 채팅방 재진입 시 메시지가 유지됨
   }, [roomId]);
 
   const actions = React.useMemo(
