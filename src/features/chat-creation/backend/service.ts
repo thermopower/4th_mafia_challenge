@@ -86,37 +86,73 @@ export const createChatRoom = async (
   }
 ) => {
   try {
-    // RPC 함수를 사용하여 트랜잭션으로 채팅방 생성
-    // RETURNS TABLE은 배열을 반환하므로 .single() 대신 배열로 받아서 첫 번째 요소 사용
-    const { data: roomDataArray, error: rpcError } = await supabase
-      .rpc('create_chat_room_transactional', {
-        p_created_by: params.createdBy,
-        p_room_type: params.type,
-        p_name: params.name,
-        p_participant_ids: params.participantIds,
-      });
+    // 1. chat_rooms 테이블에 채팅방 생성
+    const { data: roomData, error: roomError } = await supabase
+      .from('chat_rooms')
+      .insert({
+        room_type: params.type,
+        name: params.name,
+        created_by: params.createdBy,
+      })
+      .select('id, room_type, name, created_at, updated_at')
+      .single();
 
-    if (rpcError || !roomDataArray || roomDataArray.length === 0) {
+    if (roomError || !roomData) {
       return failure(
         500,
         chatCreationErrorCodes.createError,
-        rpcError?.message || 'Failed to create chat room'
+        roomError?.message || 'Failed to create chat room'
       );
     }
 
-    const roomData = roomDataArray[0] as {
-      chat_room_id: string;
-      room_type: 'direct' | 'group';
-      name: string | null;
-      created_at: string;
-      updated_at: string;
-    };
+    // 2. chat_members 테이블에 참여자 추가
+    const memberInserts = params.participantIds.map((userId) => ({
+      chat_room_id: roomData.id,
+      user_id: userId,
+      joined_at: new Date().toISOString(),
+    }));
+
+    const { error: membersError } = await supabase
+      .from('chat_members')
+      .insert(memberInserts);
+
+    if (membersError) {
+      return failure(
+        500,
+        chatCreationErrorCodes.createError,
+        membersError.message
+      );
+    }
+
+    // 3. direct 타입이면 chat_direct_pairs 테이블에 추가
+    if (params.type === 'direct' && params.participantIds.length === 2) {
+      const [userA, userB] =
+        params.participantIds[0] < params.participantIds[1]
+          ? [params.participantIds[0], params.participantIds[1]]
+          : [params.participantIds[1], params.participantIds[0]];
+
+      const { error: pairError } = await supabase
+        .from('chat_direct_pairs')
+        .insert({
+          chat_room_id: roomData.id,
+          user_a_id: userA,
+          user_b_id: userB,
+        });
+
+      if (pairError) {
+        return failure(
+          500,
+          chatCreationErrorCodes.createError,
+          pairError.message
+        );
+      }
+    }
 
     // 참여자 정보 조회
     const { data: members } = await supabase
       .from('chat_members')
       .select('user_id, users(id, nickname, profile_image_url)')
-      .eq('chat_room_id', roomData.chat_room_id);
+      .eq('chat_room_id', roomData.id);
 
     const memberList =
       members?.map((m: any) => ({
@@ -127,7 +163,7 @@ export const createChatRoom = async (
       })) || [];
 
     const result: CreateChatResponse = {
-      chat_room_id: roomData.chat_room_id,
+      chat_room_id: roomData.id,
       room_type: roomData.room_type,
       name: roomData.name,
       members: memberList,
