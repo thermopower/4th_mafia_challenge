@@ -87,28 +87,30 @@ export const createChatRoom = async (
 ) => {
   try {
     // RPC 함수를 사용하여 트랜잭션으로 채팅방 생성
-    const { data: roomData, error: rpcError } = await supabase
+    // RETURNS TABLE은 배열을 반환하므로 .single() 대신 배열로 받아서 첫 번째 요소 사용
+    const { data: roomDataArray, error: rpcError } = await supabase
       .rpc('create_chat_room_transactional', {
         p_created_by: params.createdBy,
         p_room_type: params.type,
         p_name: params.name,
         p_participant_ids: params.participantIds,
-      })
-      .single<{
-        chat_room_id: string;
-        room_type: 'direct' | 'group';
-        name: string | null;
-        created_at: string;
-        updated_at: string;
-      }>();
+      });
 
-    if (rpcError || !roomData) {
+    if (rpcError || !roomDataArray || roomDataArray.length === 0) {
       return failure(
         500,
         chatCreationErrorCodes.createError,
         rpcError?.message || 'Failed to create chat room'
       );
     }
+
+    const roomData = roomDataArray[0] as {
+      chat_room_id: string;
+      room_type: 'direct' | 'group';
+      name: string | null;
+      created_at: string;
+      updated_at: string;
+    };
 
     // 참여자 정보 조회
     const { data: members } = await supabase
