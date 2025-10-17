@@ -9,7 +9,13 @@
       "Bash(dir:*)",
       "Bash(git reset:*)",
       "Bash(git check-ignore:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)",
+      "Bash(del \"C:\\Users\\js\\Desktop\\supernext\\src\\features\\auth\\lib\\validators.ts\")",
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

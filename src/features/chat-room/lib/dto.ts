@@ -1,0 +1,33 @@
+export type {
+  Message,
+  Sender,
+  ReplyTo,
+  Reaction,
+  Attachment,
+  InitialMessagesResponse,
+  SyncMessagesResponse,
+  SendMessageRequest,
+  ToggleReactionRequest,
+  ToggleReactionResponse,
+  DeleteMessageResponse,
+  UpdateReadStatusRequest,
+  UpdateReadStatusResponse,
+} from '@/features/chat-room/backend/schema';
+
+export {
+  MessageSchema,
+  SenderSchema,
+  ReplyToSchema,
+  ReactionSchema,
+  AttachmentSchema,
+  InitialMessagesResponseSchema,
+  SyncMessagesResponseSchema,
+  SendMessageRequestSchema,
+  ToggleReactionRequestSchema,
+  ToggleReactionResponseSchema,
+  DeleteMessageResponseSchema,
+  UpdateReadStatusRequestSchema,
+  UpdateReadStatusResponseSchema,
+  MessageTypeSchema,
+  ReactionTypeSchema,
+} from '@/features/chat-room/backend/schema';

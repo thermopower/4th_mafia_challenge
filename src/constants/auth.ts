@@ -27,3 +27,21 @@ export const isAuthPublicPath = (pathname: string) => {
 };
 
 export const shouldProtectPath = (pathname: string) => !isAuthPublicPath(pathname);
+
+export const AUTH_CONSTANTS = {
+  PASSWORD_MIN_LENGTH: 8,
+  PASSWORD_MAX_LENGTH: 100,
+  PASSWORD_REGEX:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])|(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])|(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+
+  NICKNAME_MIN_LENGTH: 2,
+  NICKNAME_MAX_LENGTH: 50,
+  NICKNAME_REGEX: /^[가-힣a-zA-Z0-9\s_-]+$/,
+
+  EMAIL_MAX_LENGTH: 254,
+
+  SESSION_EXPIRES_DAYS: 30,
+  ACCESS_TOKEN_EXPIRES_HOURS: 1,
+
+  BCRYPT_SALT_ROUNDS: 10,
+} as const;
