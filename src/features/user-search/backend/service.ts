@@ -16,7 +16,7 @@ export const searchUsers = async (
     const { data, error } = await supabase
       .from('users')
       .select('id, nickname, profile_image_url, account_status')
-      .or(`nickname.ilike.%${query}%,email.ilike.%${query}%`)
+      .ilike('nickname', `%${query}%`)
       .eq('account_status', 'active')
       .neq('id', excludeUserId)
       .limit(limit);

@@ -30,19 +30,10 @@ create trigger set_users_updated_at
   for each row
   execute function public.set_updated_at();
 
--- Step 6: Enable RLS for users table (Supabase Auth best practice)
-alter table public.users enable row level security;
+-- Step 6: Disable RLS for users table (as per project guidelines)
+alter table public.users disable row level security;
 
--- Step 7: Create RLS policies
-create policy "Users can view their own profile"
-  on public.users for select
-  using (auth.uid() = id);
-
-create policy "Users can update their own profile"
-  on public.users for update
-  using (auth.uid() = id);
-
--- Step 8: Create function to handle new user profile creation
+-- Step 7: Create function to handle new user profile creation
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -62,14 +53,14 @@ begin
 end;
 $$;
 
--- Step 9: Create trigger on auth.users to auto-create profile
+-- Step 8: Create trigger on auth.users to auto-create profile
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row
   execute function public.handle_new_user();
 
--- Step 10: Disable RLS on other tables (as per project guidelines)
+-- Step 9: Disable RLS on other tables (as per project guidelines)
 alter table if exists public.chat_rooms disable row level security;
 alter table if exists public.chat_direct_pairs disable row level security;
 alter table if exists public.chat_members disable row level security;
@@ -77,7 +68,7 @@ alter table if exists public.messages disable row level security;
 alter table if exists public.message_attachments disable row level security;
 alter table if exists public.message_reactions disable row level security;
 
--- Step 11: Create index for faster user lookups
+-- Step 10: Create index for faster user lookups
 create index if not exists idx_users_account_status on public.users(account_status);
 
 comment on table public.users is 'User profile data, linked to auth.users';
