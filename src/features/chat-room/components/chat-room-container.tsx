@@ -19,7 +19,7 @@ export const ChatRoomContainer = ({
 }: ChatRoomContainerProps) => {
   return (
     <ChatRoomProvider roomId={roomId}>
-      <div className="flex h-screen flex-col">
+      <div className="flex h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
         <ChatRoomHeader />
         <MessageTimeline roomId={roomId} userId={userId} />
         <MessageComposer userId={userId} />

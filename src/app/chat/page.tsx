@@ -21,12 +21,12 @@ export default function ChatListPage() {
 
   return (
     <ChatListProvider>
-      <div className="flex flex-col h-screen">
-        <header className="flex justify-between items-center p-4 border-b bg-white">
+      <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
+        <header className="flex justify-between items-center p-4 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold">채팅</h1>
+            <h1 className="text-xl font-bold text-white">채팅</h1>
             {user && (
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-slate-300">
                 {user.profileImageUrl ? (
                   <Image
                     src={user.profileImageUrl}
@@ -45,7 +45,7 @@ export default function ChatListPage() {
           <div className="flex items-center gap-2">
             <ChatCreationSheet
               trigger={
-                <Button variant="default" size="sm">
+                <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                   <Plus className="h-4 w-4 mr-2" />
                   새 채팅
                 </Button>
@@ -56,6 +56,7 @@ export default function ChatListPage() {
               size="sm"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
+              className="border-slate-600 bg-slate-800/50 text-slate-200 hover:bg-slate-700 hover:text-white"
             >
               <LogOut className="h-4 w-4 mr-2" />
               {logoutMutation.isPending ? '로그아웃 중...' : '로그아웃'}

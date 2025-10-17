@@ -40,7 +40,7 @@ export const ChatRoomItem = ({ room, currentUserId }: Props) => {
   return (
     <div
       onClick={handleClick}
-      className="flex items-center gap-3 p-4 hover:bg-gray-100 cursor-pointer border-b transition-colors"
+      className="flex items-center gap-3 p-4 hover:bg-slate-800/50 cursor-pointer border-b border-slate-700/30 transition-colors"
     >
       <Image
         src={displayAvatar || "https://picsum.photos/seed/default/200/200"}
@@ -52,20 +52,20 @@ export const ChatRoomItem = ({ room, currentUserId }: Props) => {
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-center">
           <h3
-            className={`font-semibold truncate ${
+            className={`font-semibold truncate text-slate-100 ${
               room.unreadCount > 0 ? 'font-bold' : ''
             }`}
           >
             {displayName}
           </h3>
-          <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
+          <span className="text-xs text-slate-400 whitespace-nowrap ml-2">
             {formatRelativeTime(room.lastMessage?.createdAt || room.createdAt)}
           </span>
         </div>
-        <p className="text-sm text-gray-600 truncate">{lastMessagePreview}</p>
+        <p className="text-sm text-slate-400 truncate">{lastMessagePreview}</p>
       </div>
       {room.unreadCount > 0 && (
-        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap">
+        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap">
           {room.unreadCount > 999 ? '999+' : room.unreadCount}
         </span>
       )}

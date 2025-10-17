@@ -83,7 +83,7 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
   if (isLoading) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -91,7 +91,7 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
   if (state.messages.order.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-gray-500">메시지가 없습니다.</p>
+        <p className="text-slate-400">메시지가 없습니다.</p>
       </div>
     );
   }
@@ -104,7 +104,7 @@ export const MessageTimeline = ({ roomId, userId }: MessageTimelineProps) => {
     >
       {isFetchingNextPage && (
         <div className="flex justify-center py-2">
-          <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
         </div>
       )}
 

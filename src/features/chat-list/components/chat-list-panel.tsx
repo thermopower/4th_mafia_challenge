@@ -36,10 +36,10 @@ export const ChatListPanel = ({ currentUserId }: Props) => {
   if (isError) {
     return (
       <div className="p-4 text-center">
-        <p className="text-red-500">오류 발생: {error?.message}</p>
+        <p className="text-rose-400">오류 발생: {error?.message}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           재시도
         </button>

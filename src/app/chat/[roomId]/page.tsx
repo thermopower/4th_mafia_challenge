@@ -29,8 +29,8 @@ export default function ChatRoomPage({ params }: PageProps) {
 
   if (!roomId || !state.auth.profile) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <p className="text-gray-500">로딩 중...</p>
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
+        <p className="text-slate-300">로딩 중...</p>
       </div>
     );
   }

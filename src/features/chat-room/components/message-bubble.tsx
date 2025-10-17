@@ -39,8 +39,8 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
   if (message.isDeleted) {
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-        <div className="max-w-[70%] rounded-2xl bg-gray-100 px-4 py-2">
-          <p className="text-sm text-gray-400">삭제된 메시지입니다.</p>
+        <div className="max-w-[70%] rounded-2xl bg-slate-800/50 px-4 py-2">
+          <p className="text-sm text-slate-400">삭제된 메시지입니다.</p>
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
               alt={message.sender.nickname}
               className="h-6 w-6 rounded-full"
             />
-            <span className="text-sm font-medium">
+            <span className="text-sm font-medium text-slate-200">
               {message.sender.nickname}
             </span>
           </div>
@@ -71,7 +71,7 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
         {message.replyTo && (
           <button
             onClick={() => actions.highlightMessage(message.replyToMessageId)}
-            className="mb-2 w-full rounded-lg bg-gray-50 p-2 text-left text-xs text-gray-600 hover:bg-gray-100 transition-colors"
+            className="mb-2 w-full rounded-lg bg-slate-800/50 p-2 text-left text-xs text-slate-300 hover:bg-slate-700/50 transition-colors"
             title="원본 메시지로 이동"
           >
             <p className="font-medium">{message.replyTo.sender.nickname}</p>
@@ -85,7 +85,7 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
 
         <div
           className={`rounded-2xl px-4 py-2 ${
-            isOwn ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-900'
+            isOwn ? 'bg-blue-600 text-white' : 'bg-slate-800/70 text-slate-100'
           }`}
         >
           <p className="whitespace-pre-wrap break-words">{message.content}</p>
@@ -109,7 +109,7 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
         </div>
 
         <div className="mt-1 flex items-center gap-2">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-400">
             {formatDistanceToNow(new Date(message.createdAt), {
               addSuffix: true,
               locale: ko,
@@ -124,14 +124,14 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
                   onClick={() => handleReactionToggle(reaction.reactionType)}
                   className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs transition-colors ${
                     reaction.reactedByMe
-                      ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-blue-600/80 text-white hover:bg-blue-600'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                   }`}
                   disabled={toggleReactionMutation.isPending}
                 >
-                  {reaction.reactionType === 'like' && <Heart className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-blue-600' : ''}`} />}
-                  {reaction.reactionType === 'bookmark' && <Bookmark className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-blue-600' : ''}`} />}
-                  {reaction.reactionType === 'empathy' && <Smile className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-blue-600' : ''}`} />}
+                  {reaction.reactionType === 'like' && <Heart className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-white' : ''}`} />}
+                  {reaction.reactionType === 'bookmark' && <Bookmark className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-white' : ''}`} />}
+                  {reaction.reactionType === 'empathy' && <Smile className={`h-3 w-3 ${reaction.reactedByMe ? 'fill-white' : ''}`} />}
                   {reaction.count}
                 </button>
               ))}
@@ -141,22 +141,22 @@ export const MessageBubble = ({ message, isOwn, isHighlighted = false, userId }:
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={handleReplyClick}
-              className="rounded-full px-2 py-1 text-xs hover:bg-gray-200"
+              className="rounded-full px-2 py-1 text-xs text-slate-300 hover:bg-slate-700"
               title="답장"
             >
               답장
             </button>
             <button
               onClick={() => actions.toggleReactionPicker(message.id)}
-              className="rounded-full p-1 hover:bg-gray-200"
+              className="rounded-full p-1 hover:bg-slate-700"
               title="리액션"
             >
-              <Smile className="h-4 w-4 text-gray-400" />
+              <Smile className="h-4 w-4 text-slate-400" />
             </button>
             {isOwn && (
               <button
                 onClick={handleDeleteClick}
-                className="rounded-full px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                className="rounded-full px-2 py-1 text-xs text-rose-400 hover:bg-rose-900/30"
                 title="삭제"
               >
                 삭제

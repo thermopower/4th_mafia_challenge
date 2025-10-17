@@ -57,18 +57,19 @@ export const SignupForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-slate-100 font-semibold">이메일</FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder="example@email.com"
                   disabled={isPending}
+                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-slate-400 h-11"
                   {...field}
                 />
               </FormControl>
@@ -82,19 +83,20 @@ export const SignupForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-slate-100 font-semibold">비밀번호</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="At least 8 characters (3+ types: upper, lower, number, special)"
+                    placeholder="최소 8자 (대문자, 소문자, 숫자, 특수문자 중 3가지 이상)"
                     disabled={isPending}
+                    className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-slate-400 h-11"
                     {...field}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -112,19 +114,20 @@ export const SignupForm = () => {
           name="passwordConfirm"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel className="text-slate-100 font-semibold">비밀번호 확인</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showPasswordConfirm ? 'text' : 'password'}
-                    placeholder="Re-enter your password"
+                    placeholder="비밀번호를 다시 입력하세요"
                     disabled={isPending}
+                    className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-slate-400 h-11"
                     {...field}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswordConfirm((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
                     aria-label={showPasswordConfirm ? 'Hide password' : 'Show password'}
                   >
                     {showPasswordConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -141,12 +144,13 @@ export const SignupForm = () => {
           name="nickname"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nickname</FormLabel>
+              <FormLabel className="text-slate-100 font-semibold">닉네임</FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="2-50 characters (letters, numbers, spaces, -, _ allowed)"
+                  placeholder="2-50자 (문자, 숫자, 공백, -, _ 사용 가능)"
                   disabled={isPending}
+                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-slate-400 h-11"
                   {...field}
                 />
               </FormControl>
@@ -155,7 +159,7 @@ export const SignupForm = () => {
           )}
         />
 
-        <div className="space-y-3">
+        <div className="space-y-3 pt-2">
           <FormField
             control={form.control}
             name="termsAgreed"
@@ -169,8 +173,8 @@ export const SignupForm = () => {
                   />
                 </FormControl>
                 <div className="leading-none">
-                  <FormLabel className="text-sm font-normal">
-                    (Required) I agree to the Terms of Service
+                  <FormLabel className="text-sm font-normal text-slate-200 cursor-pointer">
+                    (필수) 서비스 이용약관에 동의합니다
                   </FormLabel>
                   <FormMessage />
                 </div>
@@ -191,8 +195,8 @@ export const SignupForm = () => {
                   />
                 </FormControl>
                 <div className="leading-none">
-                  <FormLabel className="text-sm font-normal">
-                    (Required) I agree to the Privacy Policy
+                  <FormLabel className="text-sm font-normal text-slate-200 cursor-pointer">
+                    (필수) 개인정보 처리방침에 동의합니다
                   </FormLabel>
                   <FormMessage />
                 </div>
@@ -213,8 +217,8 @@ export const SignupForm = () => {
                   />
                 </FormControl>
                 <div className="leading-none">
-                  <FormLabel className="text-sm font-normal">
-                    (Optional) I agree to receive marketing communications
+                  <FormLabel className="text-sm font-normal text-slate-300 cursor-pointer">
+                    (선택) 마케팅 정보 수신에 동의합니다
                   </FormLabel>
                 </div>
               </FormItem>
@@ -222,14 +226,14 @@ export const SignupForm = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" className="w-full h-11 text-base font-semibold" disabled={isPending}>
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing up...
+              회원가입 중...
             </>
           ) : (
-            'Sign Up'
+            '회원가입'
           )}
         </Button>
       </form>

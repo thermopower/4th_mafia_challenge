@@ -85,22 +85,22 @@ export const MessageComposer = ({ userId }: MessageComposerProps) => {
     : null;
 
   return (
-    <div className="border-t bg-white p-4">
+    <div className="border-t border-slate-700/50 bg-slate-900/80 backdrop-blur-sm p-4">
       {replyToMessage && (
-        <div className="mb-2 flex items-center justify-between rounded-lg bg-gray-50 p-2">
+        <div className="mb-2 flex items-center justify-between rounded-lg bg-slate-800/50 p-2">
           <div className="flex-1">
-            <p className="text-xs font-medium text-gray-600">
+            <p className="text-xs font-medium text-slate-300">
               {replyToMessage.sender.nickname}에게 답장
             </p>
-            <p className="truncate text-sm text-gray-500">
+            <p className="truncate text-sm text-slate-400">
               {replyToMessage.content}
             </p>
           </div>
           <button
             onClick={() => actions.setReplyTo(null)}
-            className="rounded-full p-1 hover:bg-gray-200"
+            className="rounded-full p-1 hover:bg-slate-700"
           >
-            <X className="h-4 w-4 text-gray-400" />
+            <X className="h-4 w-4 text-slate-400" />
           </button>
         </div>
       )}
@@ -115,22 +115,22 @@ export const MessageComposer = ({ userId }: MessageComposerProps) => {
             }
             onKeyDown={handleKeyDown}
             placeholder="메시지를 입력하세요..."
-            className="w-full resize-none rounded-2xl border border-gray-300 px-4 py-2 pr-12 focus:border-blue-500 focus:outline-none"
+            className="w-full resize-none rounded-2xl border border-slate-600 bg-slate-800/50 text-slate-100 placeholder:text-slate-400 px-4 py-2 pr-12 focus:border-slate-400 focus:outline-none"
             rows={1}
           />
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-gray-100"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 hover:bg-slate-700"
           >
-            <Smile className="h-5 w-5 text-gray-500" />
+            <Smile className="h-5 w-5 text-slate-400" />
           </button>
         </div>
 
         <button
           onClick={handleSend}
           disabled={!state.composer.draft.trim()}
-          className="rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="rounded-full bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed"
         >
           <Send className="h-5 w-5" />
         </button>
