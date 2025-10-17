@@ -1,6 +1,9 @@
 export type CurrentUser = {
   id: string;
   email: string | null;
+  nickname: string;
+  profileImageUrl: string;
+  accountStatus: 'active' | 'inactive' | 'suspended' | 'withdrawn';
   appMetadata: Record<string, unknown>;
   userMetadata: Record<string, unknown>;
 };

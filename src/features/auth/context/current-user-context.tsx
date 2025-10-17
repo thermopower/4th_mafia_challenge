@@ -35,19 +35,53 @@ export const CurrentUserProvider = ({
     const supabase = getSupabaseBrowserClient();
 
     try {
-      const result = await supabase.auth.getUser();
+      const { data: authData, error: authError } = await supabase.auth.getUser();
 
-      const nextSnapshot = match(result)
-        .with({ data: { user: P.nonNullable } }, ({ data }) => ({
-          status: "authenticated" as const,
-          user: {
-            id: data.user.id,
-            email: data.user.email,
-            appMetadata: data.user.app_metadata ?? {},
-            userMetadata: data.user.user_metadata ?? {},
-          },
-        }))
-        .otherwise(() => ({ status: "unauthenticated" as const, user: null }));
+      if (authError || !authData.user) {
+        const fallbackSnapshot: CurrentUserSnapshot = {
+          status: "unauthenticated",
+          user: null,
+        };
+        setSnapshot(fallbackSnapshot);
+        queryClient.setQueryData(["currentUser"], fallbackSnapshot);
+        return;
+      }
+
+      // Fetch profile from public.users
+      const { data: profileData, error: profileError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", authData.user.id)
+        .single();
+
+      if (profileError || !profileData) {
+        const fallbackSnapshot: CurrentUserSnapshot = {
+          status: "unauthenticated",
+          user: null,
+        };
+        setSnapshot(fallbackSnapshot);
+        queryClient.setQueryData(["currentUser"], fallbackSnapshot);
+        return;
+      }
+
+      const profile = profileData as {
+        nickname: string;
+        profile_image_url: string;
+        account_status: 'active' | 'inactive' | 'suspended' | 'withdrawn';
+      };
+
+      const nextSnapshot: CurrentUserSnapshot = {
+        status: "authenticated",
+        user: {
+          id: authData.user.id,
+          email: authData.user.email ?? null,
+          nickname: profile.nickname,
+          profileImageUrl: profile.profile_image_url,
+          accountStatus: profile.account_status,
+          appMetadata: authData.user.app_metadata ?? {},
+          userMetadata: authData.user.user_metadata ?? {},
+        },
+      };
 
       setSnapshot(nextSnapshot);
       queryClient.setQueryData(["currentUser"], nextSnapshot);

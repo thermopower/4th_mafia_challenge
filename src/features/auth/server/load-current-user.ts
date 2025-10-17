@@ -1,27 +1,43 @@
 import "server-only";
 
-import type { User } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import type { CurrentUserSnapshot } from "../types";
 
-const mapUser = (user: User) => ({
-  id: user.id,
-  email: user.email,
-  appMetadata: user.app_metadata ?? {},
-  userMetadata: user.user_metadata ?? {},
-});
-
 export const loadCurrentUser = async (): Promise<CurrentUserSnapshot> => {
   const supabase = await createSupabaseServerClient();
-  const result = await supabase.auth.getUser();
-  const user = result.data.user;
+  const { data: authData, error: authError } = await supabase.auth.getUser();
 
-  if (user) {
-    return {
-      status: "authenticated",
-      user: mapUser(user),
-    };
+  if (authError || !authData.user) {
+    return { status: "unauthenticated", user: null };
   }
 
-  return { status: "unauthenticated", user: null };
+  // Fetch profile from public.users
+  const { data: profileData, error: profileError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", authData.user.id)
+    .single();
+
+  if (profileError || !profileData) {
+    return { status: "unauthenticated", user: null };
+  }
+
+  const profile = profileData as {
+    nickname: string;
+    profile_image_url: string;
+    account_status: 'active' | 'inactive' | 'suspended' | 'withdrawn';
+  };
+
+  return {
+    status: "authenticated",
+    user: {
+      id: authData.user.id,
+      email: authData.user.email ?? null,
+      nickname: profile.nickname,
+      profileImageUrl: profile.profile_image_url,
+      accountStatus: profile.account_status,
+      appMetadata: authData.user.app_metadata ?? {},
+      userMetadata: authData.user.user_metadata ?? {},
+    },
+  };
 };
